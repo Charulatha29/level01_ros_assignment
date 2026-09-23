@@ -1,0 +1,165 @@
+
+LEVEL 1: ROS2 NAVIGATION ASSIGNMENT - BUG LOG & RESOLUTION REPORT
+
+This document details the six bugs identified in the starter code of the 
+'Testbed-T1.0.0' robot repository, their root causes, system impact, and 
+how each bug was resolved.
+
+
+1. CMake Macro Call Syntax in testbed_description
+
+File:
+  testbed_description/CMakeLists.txt (line 23)
+
+Symptom / Impact:
+  CMake configuration or build failure due to an invalid command syntax. In CMake, 
+  all functions and macros must be invoked with parentheses `()`, even when no 
+  arguments are passed.
+
+Root Cause:
+  The last line was written as:
+    ament_package
+
+Resolution:
+  Updated the invocation to include parentheses:
+    ament_package()
+
+Diff:
+  -ament_package
+  +ament_package()
+
+
+2. Erroneous Map Image Path in testbed_bringup
+
+File:
+  testbed_bringup/maps/testbed_world.yaml (line 1)
+
+Symptom / Impact:
+  When nav2_map_server attempts to load the map YAML file, it throws a runtime 
+  error reporting that the image file does not exist, causing map_server to fail 
+  lifecycle configuration.
+
+Root Cause:
+  The `image:` field referenced a non-existent file name:
+    image: wrong_path_testbed_world.pgm
+  However, the actual occupancy grid image present in the directory is `testbed_world.pgm`.
+
+Resolution:
+  Corrected the filename in the YAML file to match the actual image:
+    image: testbed_world.pgm
+
+Diff:
+  -image: wrong_path_testbed_world.pgm
+  +image: testbed_world.pgm
+
+
+3. Missing 'maps' Directory in testbed_bringup Installation Rules
+
+File:
+  testbed_bringup/CMakeLists.txt (lines 27-32)
+
+Symptom / Impact:
+  Upon building and installing the workspace (`colcon build`), only the `launch` 
+  directory was installed into `share/testbed_bringup/`. The `maps` directory was 
+  omitted from the install tree. Any launch file or node looking for the map in the 
+  package's share directory (`get_package_share_directory('testbed_bringup')`) would 
+  fail with file not found.
+
+Root Cause:
+  The `install(DIRECTORY ...)` directive only specified `launch`:
+    install(
+      DIRECTORY
+        launch
+      DESTINATION
+        share/${PROJECT_NAME}/
+    )
+
+Resolution:
+  Included `maps` alongside `launch`:
+    install(DIRECTORY launch maps DESTINATION share/${PROJECT_NAME}/)
+
+Diff:
+  -install(
+  -  DIRECTORY
+  -    launch
+  -  DESTINATION
+  -    share/${PROJECT_NAME}/
+  -)
+  +install(DIRECTORY launch maps DESTINATION share/${PROJECT_NAME}/)
+
+
+4. Malformed XML Closing Tag in testbed.gazebo
+
+File:
+  testbed_description/urdf/testbed.gazebo (line 40)
+
+Symptom / Impact:
+  Xacro / URDF parsing error during simulation bringup. Gazebo and robot_state_publisher 
+  fail to load the model description due to invalid XML syntax.
+
+Root Cause:
+  An extra trailing angle bracket `>` existed on the closing tag of the IMU sensor 
+  plugin parameter:
+    <initial_orientation_as_reference>false</initial_orientation_as_reference>>
+
+Resolution:
+  Removed the superfluous `>`:
+    <initial_orientation_as_reference>false</initial_orientation_as_reference>
+
+Diff:
+  -      <initial_orientation_as_reference>false</initial_orientation_as_reference>>
+  +      <initial_orientation_as_reference>false</initial_orientation_as_reference>
+
+
+5. Constrained LiDAR Maximum Range in testbed.gazebo
+
+File:
+  testbed_description/urdf/testbed.gazebo (line 65)
+
+Symptom / Impact:
+  The simulated 2D ray sensor was restricted to a maximum range of 1.5 meters. 
+  In Gazebo, obstacles further than 1.5 meters were completely invisible to the 
+  robot. In an indoor playground environment, this severely degraded mapping, 
+  AMCL particle filter convergence, and global/local costmap obstacle detection.
+
+Root Cause:
+  The `<max>` tag in the sensor range block was configured too low:
+    <range>
+      <min>0.10</min>
+      <max>1.5</max>
+      <resolution>0.01</resolution>
+    </range>
+
+Resolution:
+  Increased the LiDAR max range to 12.0 meters, typical for planar LiDARs (e.g., Hokuyo/RPLIDAR):
+    <max>12</max>
+
+Diff:
+  -          <max>1.5</max>
+  +          <max>12</max>
+
+
+6. Missing 'use_sim_time' in robot_state_publisher Node
+
+File:
+  testbed_description/launch/robot_description.launch.py (line 26)
+
+Symptom / Impact:
+  `robot_state_publisher` defaulted to using system wall clock time rather than 
+  simulated clock time published on `/clock` by Gazebo. This caused significant 
+  TF transform timestamp discrepancies: downstream nodes (such as RViz, AMCL, and 
+  Nav2 costmaps) running with `use_sim_time:=True` rejected TF frames as being in 
+  the future or past, leading to "Extrapolation Error" and broken transform trees.
+
+Root Cause:
+  The parameters list only contained `robot_description`:
+    parameters=[robot_description]
+
+Resolution:
+  Added `{'use_sim_time': True}` to the parameters list:
+    parameters=[robot_description, {'use_sim_time': True}]
+
+Diff:
+  -            parameters=[robot_description]),
+  +            parameters=[robot_description, {'use_sim_time': True}]),
+

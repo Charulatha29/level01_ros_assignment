@@ -20,10 +20,30 @@ def generate_launch_description():
     )
   ) 
   
+  use_sim_time = LaunchConfiguration('use_sim_time')
+
+  declare_use_sim_time_cmd = launch.actions.DeclareLaunchArgument(
+    'use_sim_time',
+    default_value='true',
+    description='Use simulation (Gazebo) clock if true'
+  )
+
+  rviz_config_dir = os.path.join(
+    pkg_testbed_description,
+    'rviz',
+    'full_bringup.rviz')
+
+  declare_rvizconfig_cmd = launch.actions.DeclareLaunchArgument(
+    'rvizconfig',
+    default_value=rviz_config_dir,
+    description='Absolute path to rviz config file'
+  )
+
   state_pub = IncludeLaunchDescription(
     PythonLaunchDescriptionSource(
       os.path.join(pkg_testbed_description, 'launch', 'robot_description.launch.py'),
-    )
+    ),
+    launch_arguments={'use_sim_time': use_sim_time}.items()
   )
 
   spawn = IncludeLaunchDescription(
@@ -31,22 +51,18 @@ def generate_launch_description():
       os.path.join(pkg_testbed_gazebo, 'launch', 'spawn_testbed.launch.py'),
     )
   )
-  
-  rviz_config_dir = os.path.join(
-    launch_ros.substitutions.FindPackageShare(package='testbed_description').find('testbed_description'),
-    'rviz/full_bringup.rviz')
-  
+
   rviz_node = Node(
     package='rviz2',
     executable='rviz2',
     name='rviz_node',
-    parameters=[{'use_sim_time': True}],
+    parameters=[{'use_sim_time': use_sim_time}],
     arguments=['-d', LaunchConfiguration('rvizconfig')]
   )
 
   return LaunchDescription([
-    launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=rviz_config_dir,
-                                            description='Absolute path to rviz config file'),
+    declare_use_sim_time_cmd,
+    declare_rvizconfig_cmd,
     state_pub,
     gazebo,
     spawn,

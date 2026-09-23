@@ -5,4 +5,24 @@
   <color rgba="0.700 0.700 0.700 1.000"/>
 </material>
 
+<material name="chassis_gray">
+  <color rgba="0.200 0.200 0.200 1.000"/>
+</material>
+
+<material name="wheel_black">
+  <color rgba="0.050 0.050 0.050 1.000"/>
+</material>
+
+<material name="caster_dark">
+  <color rgba="0.100 0.100 0.100 1.000"/>
+</material>
+
+<material name="lidar_blue">
+  <color rgba="0.100 0.400 0.900 1.000"/>
+</material>
+
+<material name="imu_red">
+  <color rgba="0.900 0.100 0.100 1.000"/>
+</material>
+
 </robot>

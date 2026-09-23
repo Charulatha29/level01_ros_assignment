@@ -26,7 +26,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="chassis_gray"/>
   </visual>
   <collision>
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -47,7 +47,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="wheel_black"/>
   </visual>
   <collision>
     <origin xyz="0.050476 -0.135241 -0.050004" rpy="0 0 0"/>
@@ -68,7 +68,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/caster_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="caster_dark"/>
   </visual>
   <collision>
     <origin xyz="0.175703 -0.108591 -0.084004" rpy="0 0 0"/>
@@ -89,7 +89,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/caster_2.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="caster_dark"/>
   </visual>
   <collision>
     <origin xyz="0.175703 0.184109 -0.084004" rpy="0 0 0"/>
@@ -110,7 +110,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/caster_3.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="caster_dark"/>
   </visual>
   <collision>
     <origin xyz="-0.074297 -0.108591 -0.084004" rpy="0 0 0"/>
@@ -131,7 +131,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/caster_4.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="caster_dark"/>
   </visual>
   <collision>
     <origin xyz="-0.074297 0.184109 -0.084004" rpy="0 0 0"/>
@@ -152,7 +152,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/lidar_link_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="lidar_blue"/>
   </visual>
   <collision>
     <origin xyz="0.04 0.033 -0.226509" rpy="0 0 0"/>
@@ -173,7 +173,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/imu_link_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="imu_red"/>
   </visual>
   <collision>
     <origin xyz="0.1 -0.05 -0.1612" rpy="0 0 0"/>
@@ -215,7 +215,7 @@
     <geometry>
       <mesh filename="file://$(find testbed_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-    <material name="silver"/>
+    <material name="wheel_black"/>
   </visual>
   <collision>
     <origin xyz="0.050503 0.210759 -0.050004" rpy="0 0 0"/>
